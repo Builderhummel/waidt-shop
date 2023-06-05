@@ -3,7 +3,7 @@
 
 #include "item_object.h"
 
-ItemObject_t *item_object_new(int id, char *name, int price, int in_warehouse) {
+ItemObject_t *item_object_new(uint32_t id, char *name, uint16_t price, uint32_t order_id, uint8_t in_warehouse) {
         
         ItemObject_t *item = malloc(sizeof(ItemObject_t));
         item->id = id;
