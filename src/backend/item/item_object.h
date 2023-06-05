@@ -18,7 +18,7 @@ typedef struct
         char* name;
         int price;
         int in_warehouse; //Bool, Warehouse location, if 0, then in no warehouse
-} item_object_t;
+} ItemObject_t;
 
-item_object_t *item_object_new(int id, char *name, int price, int in_warehouse);
-void item_object_free(item_object_t *item);
+ItemObject_t *item_object_new(int id, char *name, int price, int in_warehouse);
+void item_object_free(ItemObject_t *item);
