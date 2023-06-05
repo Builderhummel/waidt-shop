@@ -1,22 +1,41 @@
-CFLAGS = -Wall -g
-CC = gcc #-std=c99 
-OBJ_PATH = obj
-VPATH = src src/backend/item
+TARGET_EXEC ?= a.out
 
-all: main
+BUILD_DIR ?= ./build
+SRC_DIRS ?= ./src
 
-main: item_object.o main.o
-	$(CC) $(CFLAGS) $(OBJ_PATH)/main.o $(OBJ_PATH)/item_object.o -Isrc/backend/item/ -o main
+SRCS := $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)
+OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
+DEPS := $(OBJS:.o=.d)
 
-main.o: main.c
-	$(CC) $(CFLAGS) src/main.c -c -o $(OBJ_PATH)/main.o
+INC_DIRS := $(shell find $(SRC_DIRS) -type d)
+INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-# backend
-# item
-item_object.o: item_object.c
-	$(CC) $(CFLAGS) src/backend/item/item_object.c -c -o $(OBJ_PATH)/item_object.o
+CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
 
+$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+
+# assembly
+$(BUILD_DIR)/%.s.o: %.s
+	$(MKDIR_P) $(dir $@)
+	$(AS) $(ASFLAGS) -c $< -o $@
+
+# c source
+$(BUILD_DIR)/%.c.o: %.c
+	$(MKDIR_P) $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+# c++ source
+$(BUILD_DIR)/%.cpp.o: %.cpp
+	$(MKDIR_P) $(dir $@)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+
+.PHONY: clean
 
 clean:
-	rm -rf main
-	rm -rf $(OBJ_PATH)/*.o
+	$(RM) -r $(BUILD_DIR)
+
+-include $(DEPS)
+
+MKDIR_P ?= mkdir -p
