@@ -6,13 +6,13 @@
 typedef struct
 {
         uint32_t id; // Unique ID
-        char* name; // Explicit name for product type
+        uint32_t product_type; // product type mapped to id, eg: 1 = "cookie"
         uint16_t price;
         uint32_t order_id; // 0 if unassigned to order
         uint8_t warehouse_id; // Warehouse ID, if 0, then in no warehouse
 } ItemObject_t;
 
-ItemObject_t *item_object_new(uint32_t id, char *name, uint16_t price, uint32_t order_id, uint8_t warehouse_id);
+ItemObject_t *item_object_new(uint32_t id, uint32_t product_type, uint16_t price, uint32_t order_id, uint8_t warehouse_id);
 void item_object_free(ItemObject_t *item);
 
 #endif // ITEM_OBJECT_H

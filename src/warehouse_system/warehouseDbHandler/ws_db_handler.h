@@ -1,5 +1,5 @@
-#ifndef DB_HANDLER_H
-#define DB_HANDLER_H
+#ifndef WS_DB_HANDLER_H
+#define WS_DB_HANDLER_H
 
 #define DBHANDLER_QUERY_BUFFER 1024
 
@@ -14,4 +14,4 @@ int itemDbHandler_insert(MYSQL* conn, ItemObject_t * item);
 int itemDbHandler_update(MYSQL* conn, ItemObject_t * item);
 int itemDbHandler_get_free_item(MYSQL* conn, ItemObject_t* item);
 
-#endif // DB_HANDLER_H
+#endif // WS_DB_HANDLER_H

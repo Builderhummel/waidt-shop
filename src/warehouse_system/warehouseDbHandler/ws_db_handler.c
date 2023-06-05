@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <mysql/mysql.h>
 #include <string.h>
+#include <stdlib.h>
 
-#include "db_handler.h"
+#include "ws_db_handler.h"
 #include "../item/item_object.h"
 
 MYSQL* itemDbHandler_new_mysql_object() {
@@ -41,7 +42,7 @@ void itemDbHandler_init_table(MYSQL* conn) {
         }
         
         // Create table items
-        if (mysql_query(conn, "CREATE TABLE IF NOT EXISTS items(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), price INT, order_id INT, warehouse_id INT))"))
+        if (mysql_query(conn, "CREATE TABLE IF NOT EXISTS items(id INT PRIMARY KEY AUTO_INCREMENT, product_type INT, price INT, order_id INT, warehouse_id INT))"))
         {
                 finish_with_error(conn);
         }        
@@ -49,7 +50,7 @@ void itemDbHandler_init_table(MYSQL* conn) {
 
 int itemDbHandler_insert(MYSQL* conn, ItemObject_t * item) {
         char query[DBHANDLER_QUERY_BUFFER];
-        sprintf(query, "INSERT INTO items (name, price, order_id, warehouse_id) VALUES ('%s', %d, %d, %d)", item->name, item->price, item->order_id, item->warehouse_id);
+        sprintf(query, "INSERT INTO items (name, price, order_id, warehouse_id) VALUES ('%d', %d, %d, %d)", item->product_type, item->price, item->order_id, item->warehouse_id);
         if (mysql_query(conn, query))
         {
                 finish_with_error(conn);
@@ -60,7 +61,7 @@ int itemDbHandler_insert(MYSQL* conn, ItemObject_t * item) {
 
 int itemDbHandler_update(MYSQL* conn, ItemObject_t * item) {
         char query[DBHANDLER_QUERY_BUFFER];
-        sprintf(query, "UPDATE items SET name='%s', price=%d, order_id=%d, warehouse_id=%d WHERE id=%d", item->name, item->price, item->order_id, item->warehouse_id, item->id);
+        sprintf(query, "UPDATE items SET product_type='%d', price=%d, order_id=%d, warehouse_id=%d WHERE id=%d", item->product_type, item->price, item->order_id, item->warehouse_id, item->id);
         if (mysql_query(conn, query))
         {
                 finish_with_error(conn);
@@ -75,7 +76,7 @@ int itemDbHandler_get_free_item(MYSQL* conn, ItemObject_t* item) {
         MYSQL_RES *result;
         MYSQL_ROW row;
         char query[DBHANDLER_QUERY_BUFFER];
-        sprintf(query, "SELECT * FROM items WHERE order_id=0 AND warehouse_id=%d LIMIT 1", item->warehouse_id);
+        sprintf(query, "SELECT * FROM items WHERE product_type=%d AND order_id=0 AND warehouse_id=%d LIMIT 1", item->product_type, item->warehouse_id);
         if (mysql_query(conn, query))
         {
                 finish_with_error(conn);
@@ -91,7 +92,7 @@ int itemDbHandler_get_free_item(MYSQL* conn, ItemObject_t* item) {
                 return 1;
         }
         item->id = atoi(row[0]);
-        item->name = strdup(row[1]);
+        item->product_type = atoi(row[1]);
         item->price = atoi(row[2]);
         item->order_id = atoi(row[3]);
         item->warehouse_id = atoi(row[4]);
