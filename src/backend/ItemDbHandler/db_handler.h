@@ -1,5 +1,7 @@
-#ifndef DB-HANDLER_H
-#define DB-HANDLER_H
+#ifndef DB_HANDLER_H
+#define DB_HANDLER_H
+
+#define DBHANDLER_QUERY_BUFFER 1024
 
 #include <mysql/mysql.h>
 #include "../item/item_object.h"
@@ -10,6 +12,6 @@ void itemDbHandler_init_tables(MYSQL* conn);
 
 int itemDbHandler_insert(MYSQL* conn, ItemObject_t * item);
 int itemDbHandler_update(MYSQL* conn, ItemObject_t * item);
-int itemDbHandler_get_free_item(MYSQL* conn, int id);
+int itemDbHandler_get_free_item(MYSQL* conn, ItemObject_t* item);
 
-#endif // DB-HANDLER_H
+#endif // DB_HANDLER_H
