@@ -7,8 +7,10 @@ SRCS := $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
+INC_MYSQL := $(shell mysql_config --include) $(shell mysql_config --libs)
+
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
-INC_FLAGS := $(addprefix -I,$(INC_DIRS))
+INC_FLAGS := $(addprefix -I,$(INC_DIRS)) $(INC_MYSQL)
 
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
 
